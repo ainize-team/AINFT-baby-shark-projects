@@ -1,26 +1,22 @@
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel, Field
 
 
 class UserRequest(BaseModel):
+    bot_name: str = Field(
+        ...,
+        description="Bot Name",
+    )
     user_message: str = Field(
         ...,
         min_length=1,
         max_tokens=150,
         description="User Input Message",
     )
-    history: Optional[List[str]] = Field(description="User Chat History")
 
 
-class TextGenerationRequest(BaseModel):
-    prompt: str = Field(
-        ...,
-        min_length=1,
-        max_tokens=8192,
-        description="The prompt(s) to generate completions for, encoded as a string, array of strings, array of tokens, or array of token arrays.",
-    )
-
+class GenerationParameters(BaseModel):
     max_new_tokens: int = Field(
         default=16,
         gt=0,
@@ -65,3 +61,21 @@ class TextGenerationRequest(BaseModel):
         le=5,
         description="The number of independently computed returned sequences for each element in the batch.",
     )
+
+
+class ChatPrompt(BaseModel):
+    task_description: str = "The following is a conversation with an AI."
+    persona: List[str] = Field(
+        ...,
+        description="The prompt(s) to generate completions for, encoded as a string, array of strings, array of tokens, or array of token arrays.",
+    )
+
+
+class TextGenerationRequest(BaseModel):
+    prompt: str = Field(
+        ...,
+        min_length=1,
+        max_tokens=8192,
+        description="The prompt(s) to generate completions for, encoded as a string, array of strings, array of tokens, or array of token arrays.",
+    )
+    generation_paramters: GenerationParameters

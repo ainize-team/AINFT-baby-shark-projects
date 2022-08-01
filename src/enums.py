@@ -13,3 +13,8 @@ class EnvEnum(StrEnum):
     DEV: str = "dev"
     STAGGING: str = "stagging"
     PROD: str = "prod"
+
+
+class LLMTypeEnum(StrEnum):
+    HUGGINGFACE: str = "huggingface"
+    OPENAI: str = "openai"
