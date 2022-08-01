@@ -17,7 +17,7 @@ def _load_data(app: FastAPI) -> None:
         bot: str,
     ) -> str:
         persona_str = " ".join(persona)
-        examples_str = "\n".join(
+        examples_str = "\n\n".join(
             [
                 f"{human}: {example[human]}\n{bot}: {example[bot]}"
                 for example in examples

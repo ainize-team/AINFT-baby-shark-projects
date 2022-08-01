@@ -23,7 +23,7 @@ async def chat(request: Request, data: UserRequest):
     request_data = bot["generate_parameters"]
     request_data[
         "prompt"
-    ] = f"{bot['prompt']}\n{bot['human']}: {data.user_message}\n{bot['bot']}: "
+    ] = f"{bot['prompt']}\n\n{bot['human']}: {data.user_message}\n{bot['bot']}: "
     res = requests.post(
         f"{endpoint}/generate",
         headers={"Content-Type": "application/json", "accept": "application/json"},
