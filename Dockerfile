@@ -14,5 +14,7 @@ COPY ./data /app/data
 
 EXPOSE 8000
 
-# gunicorn --bind 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker main:app
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--timeout", "300", "-k", "uvicorn.workers.UvicornWorker", "main:app"]
+COPY ./start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+CMD ./start.sh
