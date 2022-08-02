@@ -27,7 +27,7 @@ class DataSettings(BaseSettings):
 
 
 class AiNetworkSettings(BaseSettings):
-    provider_url: AinetworkProviderURLEnum = AinetworkProviderURLEnum.TEST_NET
+    ain_provider_url: AinetworkProviderURLEnum = AinetworkProviderURLEnum.TEST_NET
     ain_private_key: str
     ain_address: str
 

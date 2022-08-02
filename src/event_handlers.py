@@ -53,9 +53,11 @@ def _load_data(app: FastAPI) -> None:
 def _connect_ain(app: FastAPI) -> None:
     logger.info("Connect AINetwork")
     chain_id = (
-        0 if ainetwork_settings.provider_url == AinetworkProviderURLEnum.TEST_NET else 1
+        0
+        if ainetwork_settings.ain_provider_url == AinetworkProviderURLEnum.TEST_NET
+        else 1
     )
-    app.state.ain = Ain(ainetwork_settings.provider_url, chainId=chain_id)
+    app.state.ain = Ain(ainetwork_settings.ain_provider_url, chainId=chain_id)
     app.state.ain.wallet.addAndSetDefaultAccount(ainetwork_settings.ain_private_key)
 
 
