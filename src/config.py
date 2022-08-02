@@ -3,7 +3,7 @@ from typing import Union
 
 from pydantic import BaseSettings, Field, HttpUrl
 
-from enums import EnvEnum, LLMTypeEnum
+from enums import AinetworkProviderURLEnum, EnvEnum, LLMTypeEnum
 
 
 class AppSettings(BaseSettings):
@@ -26,6 +26,13 @@ class DataSettings(BaseSettings):
     )
 
 
+class AiNetworkSettings(BaseSettings):
+    provider_url: AinetworkProviderURLEnum = AinetworkProviderURLEnum.TEST_NET
+    ain_private_key: str
+    ain_address: str
+
+
 app_settings = AppSettings()
 llm_settings = LLMSettings()
 data_settings = DataSettings()
+ainetwork_settings = AiNetworkSettings()

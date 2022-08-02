@@ -1,26 +1,51 @@
+import asyncio
 import json
 import time
-from typing import List
+from typing import Dict, List
 
 import requests
-from fastapi import APIRouter, HTTPException, Request
+from ain.ain import Ain
+from ain.types import ValueOnlyTransactionInput
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 from loguru import logger
 
-from config import llm_settings
+from config import ainetwork_settings, llm_settings
 from schemas import UserRequest
 
 
 router = APIRouter()
 
 
+async def set_value(ref, value, ain):
+    result = await asyncio.create_task(
+        ain.db.ref(ref).setValue(ValueOnlyTransactionInput(value=value, nonce=-1))
+    )
+    logger.info(f"Set Value Result : {result}")
+
+
+def chat_log_writer(data: Dict):
+    asyncio.run(set_value(data["path"], data["text"], data["ain"]))
+
+
 @router.post("/chat")
-async def chat(request: Request, data: UserRequest):
+async def chat(request: Request, data: UserRequest, background_tasks: BackgroundTasks):
+    now = str(int(time.time() * 1000))
+    ain: Ain = request.app.state.ain
     bots = request.app.state.bots
     endpoint = llm_settings.llm_endpoint
     if data.bot_name not in bots:
         raise HTTPException(422, f"{data.bot_name} is not found.")
     bot = bots[data.bot_name]
+    ainft_name = bot["ainft_name"]
     request_data = bot["generate_parameters"]
+    background_tasks.add_task(
+        chat_log_writer,
+        {
+            "text": data.user_message,
+            "ain": ain,
+            "path": f"/apps/{ainft_name}/{ainetwork_settings.ain_address}/{now}/request",
+        },
+    )
     request_data[
         "prompt"
     ] = f"{bot['prompt']}\n\n{bot['human']}: {data.user_message}\n{bot['bot']}:"
@@ -51,7 +76,16 @@ async def chat(request: Request, data: UserRequest):
                     ):
                         break
                     ret_text += result[i]
-                return ret_text.strip()
+                ret_text = ret_text.strip()
+                background_tasks.add_task(
+                    chat_log_writer,
+                    {
+                        "text": ret_text,
+                        "ain": ain,
+                        "path": f"/apps/{ainft_name}/{ainetwork_settings.ain_address}/{now}/response",
+                    },
+                )
+                return ret_text
 
             time.sleep(1)
         raise HTTPException(500, "Server Error")

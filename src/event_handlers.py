@@ -2,10 +2,12 @@ import json
 import os
 from typing import Callable, Dict, List
 
+from ain.ain import Ain
 from fastapi import FastAPI
 from loguru import logger
 
-from config import data_settings
+from config import ainetwork_settings, data_settings
+from enums import AinetworkProviderURLEnum
 
 
 def _load_data(app: FastAPI) -> None:
@@ -44,12 +46,23 @@ def _load_data(app: FastAPI) -> None:
             "generate_parameters": json_obj["generate_parameters"],
             "human": json_obj["human"],
             "bot": json_obj["bot"],
+            "ainft_name": json_obj["ainft_name"],
         }
+
+
+def _connect_ain(app: FastAPI) -> None:
+    logger.info("Connect AINetwork")
+    chain_id = (
+        0 if ainetwork_settings.provider_url == AinetworkProviderURLEnum.TEST_NET else 1
+    )
+    app.state.ain = Ain(ainetwork_settings.provider_url, chainId=chain_id)
+    app.state.ain.wallet.addAndSetDefaultAccount(ainetwork_settings.ain_private_key)
 
 
 def start_app_handler(app: FastAPI) -> Callable:
     def startup() -> None:
         logger.info("Running App Start Handler.")
         _load_data(app)
+        _connect_ain(app)
 
     return startup

@@ -98,5 +98,6 @@
     "max_new_tokens": 150,
     "temperature": 0.9,
     "top_p": 1
-  }
+  },
+  "ainft_name": "dh_shark_chatbot_03"
 }
