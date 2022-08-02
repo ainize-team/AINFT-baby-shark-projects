@@ -43,8 +43,7 @@ async def create_app(app_name):
     result = await ain.db.ref(f"/manage_app/{app_name}/create/{now}").setValue(
         ValueOnlyTransactionInput(
             value={
-                "admin": {address: True},
-                "service": {"stacking": {"lockup_duration": 604800000}},
+                "admin": {address: True}
             },
             nonce=-1,
         )
