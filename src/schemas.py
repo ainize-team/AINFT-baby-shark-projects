@@ -79,3 +79,9 @@ class TextGenerationRequest(BaseModel):
         description="The prompt(s) to generate completions for, encoded as a string, array of strings, array of tokens, or array of token arrays.",
     )
     generation_paramters: GenerationParameters
+
+
+class ServerStatus(BaseModel):
+    number_of_workers: int
+    number_of_bot: int
+    ain_provider_url: str
