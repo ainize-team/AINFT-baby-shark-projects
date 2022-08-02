@@ -18,3 +18,8 @@ class EnvEnum(StrEnum):
 class LLMTypeEnum(StrEnum):
     HUGGINGFACE: str = "huggingface"
     OPENAI: str = "openai"
+
+
+class AinetworkProviderURLEnum(StrEnum):
+    TEST_NET: str = "https://testnet-api.ainetwork.ai"
+    MAIN_NET: str = "https://mainnet-api.ainetwork.ai"
