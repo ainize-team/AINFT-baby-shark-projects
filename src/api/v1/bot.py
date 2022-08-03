@@ -1,7 +1,7 @@
 import asyncio
 import json
 import time
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import requests
 from ain.ain import Ain
@@ -16,7 +16,7 @@ from schemas import UserRequest
 router = APIRouter()
 
 
-async def set_value(ref, value, ain):
+async def set_value(ref: str, value: Any, ain: Ain):
     result = await asyncio.create_task(
         ain.db.ref(ref).setValue(ValueOnlyTransactionInput(value=value, nonce=-1))
     )
@@ -27,7 +27,7 @@ def chat_log_writer(data: Dict):
     asyncio.run(set_value(data["path"], data["text"], data["ain"]))
 
 
-@router.post("/chat")
+@router.post("/chat", response_model=str)
 async def chat(request: Request, data: UserRequest, background_tasks: BackgroundTasks):
     now = str(int(time.time() * 1000))
     ain: Ain = request.app.state.ain
@@ -43,7 +43,7 @@ async def chat(request: Request, data: UserRequest, background_tasks: Background
         {
             "text": data.user_message,
             "ain": ain,
-            "path": f"/apps/{ainft_name}/{ainetwork_settings.ain_address}/{now}/request",
+            "path": f"/apps/{ainft_name}/logs/{ainetwork_settings.ain_address}/{now}/request",
         },
     )
     request_data[
@@ -82,26 +82,26 @@ async def chat(request: Request, data: UserRequest, background_tasks: Background
                     {
                         "text": ret_text,
                         "ain": ain,
-                        "path": f"/apps/{ainft_name}/{ainetwork_settings.ain_address}/{now}/response",
+                        "path": f"/apps/{ainft_name}/logs/{ainetwork_settings.ain_address}/{now}/response",
                     },
                 )
                 return ret_text
 
-            time.sleep(1)
+            await asyncio.sleep(1)
         raise HTTPException(500, "Server Error")
     else:
         logger.error(f"{res.text}")
         raise HTTPException(500, "Server Error")
 
 
-@router.get("/botList")
-async def get_bot_list(request: Request) -> List[str]:
+@router.get("/list", response_model=List[str])
+async def get_bot_list(request: Request):
     bots = request.app.state.bots
     return list(bots.keys())
 
 
-@router.get("/botPrompt")
-async def get_bot_prompt(request: Request, bot_name: str) -> str:
+@router.get("/prompt", response_model=str)
+async def get_bot_prompt(request: Request, bot_name: str):
     bots = request.app.state.bots
     if bot_name not in bots:
         raise HTTPException(422, f"{bot_name} is not found.")
