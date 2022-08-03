@@ -87,7 +87,7 @@ async def chat(request: Request, data: UserRequest, background_tasks: Background
                 )
                 return ret_text
 
-            time.sleep(1)
+            await asyncio.sleep(1)
         raise HTTPException(500, "Server Error")
     else:
         logger.error(f"{res.text}")
