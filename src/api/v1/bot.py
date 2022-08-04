@@ -1,6 +1,6 @@
 import asyncio
 import json
-import time
+from datetime import datetime
 from typing import Any, Dict, List
 
 import requests
@@ -18,7 +18,9 @@ router = APIRouter()
 
 async def set_value(ref: str, value: Any, ain: Ain):
     result = await asyncio.create_task(
-        ain.db.ref(ref).setValue(ValueOnlyTransactionInput(value=value, nonce=-1))
+        ain.db.ref(ref).setValue(
+            ValueOnlyTransactionInput(value=value, nonce=-1, gas_price=500)
+        )
     )
     logger.info(f"Set Value Result : {result}")
 
@@ -29,7 +31,7 @@ def chat_log_writer(data: Dict):
 
 @router.post("/chat", response_model=str)
 async def chat(request: Request, data: UserRequest, background_tasks: BackgroundTasks):
-    now = str(int(time.time() * 1000))
+    now = str(int(datetime.utcnow().timestamp() * 1000))
     ain: Ain = request.app.state.ain
     bots = request.app.state.bots
     endpoint = llm_settings.llm_endpoint
