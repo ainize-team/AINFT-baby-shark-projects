@@ -18,7 +18,9 @@ router = APIRouter()
 
 async def set_value(ref: str, value: Any, ain: Ain):
     result = await asyncio.create_task(
-        ain.db.ref(ref).setValue(ValueOnlyTransactionInput(value=value, nonce=-1))
+        ain.db.ref(ref).setValue(
+            ValueOnlyTransactionInput(value=value, nonce=-1, gas_price=500)
+        )
     )
     logger.info(f"Set Value Result : {result}")
 
