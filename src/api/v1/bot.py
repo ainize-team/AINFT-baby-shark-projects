@@ -1,6 +1,6 @@
 import asyncio
 import json
-import time
+from datetime import datetime
 from typing import Any, Dict, List
 
 import requests
@@ -29,7 +29,7 @@ def chat_log_writer(data: Dict):
 
 @router.post("/chat", response_model=str)
 async def chat(request: Request, data: UserRequest, background_tasks: BackgroundTasks):
-    now = str(int(time.time() * 1000))
+    now = str(int(datetime.utcnow().timestamp() * 1000))
     ain: Ain = request.app.state.ain
     bots = request.app.state.bots
     endpoint = llm_settings.llm_endpoint
