@@ -2,10 +2,9 @@ import os
 
 from fastapi import APIRouter, Request
 
+from api import v1
 from config import ainetwork_settings
 from schemas import ServerStatus
-
-from . import v1
 
 
 router = APIRouter()
