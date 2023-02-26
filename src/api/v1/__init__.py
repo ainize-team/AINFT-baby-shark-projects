@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from . import bot
+from api.v1 import bot
 
 
 router = APIRouter()
