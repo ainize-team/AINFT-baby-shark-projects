@@ -15,6 +15,8 @@ RUN apt-get update \
     && apt-get install --no-install-recommends -y \
     build-essential \
     curl \
+    gcc \
+    g++ \
     && curl -sSL https://install.python-poetry.org | python3 - \
     && apt-get purge --auto-remove -y \
     build-essential
@@ -25,6 +27,7 @@ COPY ./poetry.lock ./poetry.lock
 RUN poetry install --only main
 
 COPY ./src/ /app/
+COPY ./data /app/data
 
 EXPOSE 8000
 
