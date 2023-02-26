@@ -8,7 +8,7 @@ from enums import AinetworkProviderURLEnum, EnvEnum, LLMTypeEnum
 
 class AppSettings(BaseSettings):
     app_name: str = Field("AINFT-BabyShark-Projects", description="FastAPI App Name")
-    app_version: str = Field("0.0.1", description="FastAPI App Version")
+    app_version: str = Field("0.1.0", description="FastAPI App Version")
     app_env: EnvEnum = Field(EnvEnum.DEV, description="FastAPI App Environment")
 
 
