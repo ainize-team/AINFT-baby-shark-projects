@@ -14,16 +14,12 @@ class AppSettings(BaseSettings):
 
 class LLMSettings(BaseSettings):
     llm_endpoint: HttpUrl = Field(..., description="Large Language Model Endpoint")
-    llm_type: LLMTypeEnum = Field(
-        LLMTypeEnum.HUGGINGFACE, description="Large Language Model Type"
-    )
+    llm_type: LLMTypeEnum = Field(LLMTypeEnum.HUGGINGFACE, description="Large Language Model Type")
 
 
 # TODO: Store Data at Server
 class DataSettings(BaseSettings):
-    data_root_dir: Union[str, os.PathLike] = Field(
-        "./data", description="Path where data stored"
-    )
+    data_root_dir: Union[str, os.PathLike] = Field("./data", description="Path where data stored")
 
 
 class AiNetworkSettings(BaseSettings):

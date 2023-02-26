@@ -1,16 +1,30 @@
-FROM python:3.8.13-slim-buster
-
-WORKDIR /app
+FROM python:3.9-slim-buster
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    VIRTUAL_ENVIRONMENT_PATH="/app/.venv"
 
-COPY ./requirements.txt /app/requirements.txt
-RUN pip install -r requirements.txt
+ENV PATH="$POETRY_HOME/bin:$VIRTUAL_ENVIRONMENT_PATH/bin:$PATH"
 
-COPY ./src /app/
-COPY ./data /app/data
+# Install Poetry
+# https://python-poetry.org/docs/#osx--linux--bashonwindows-install-instructions
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+    build-essential \
+    curl \
+    && curl -sSL https://install.python-poetry.org | python3 - \
+    && apt-get purge --auto-remove -y \
+    build-essential
+    
+WORKDIR /app
+COPY ./pyproject.toml ./pyproject.toml
+COPY ./poetry.lock ./poetry.lock
+RUN poetry install --only main
+
+COPY ./src/ /app/
 
 EXPOSE 8000
 

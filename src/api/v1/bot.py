@@ -18,9 +18,7 @@ router = APIRouter()
 
 async def set_value(ref: str, value: Any, ain: Ain):
     result = await asyncio.create_task(
-        ain.db.ref(ref).setValue(
-            ValueOnlyTransactionInput(value=value, nonce=-1, gas_price=500)
-        )
+        ain.db.ref(ref).setValue(ValueOnlyTransactionInput(value=value, nonce=-1, gas_price=500))
     )
     logger.info(f"Set Value Result : {result}")
 
@@ -48,9 +46,7 @@ async def chat(request: Request, data: UserRequest, background_tasks: Background
             "path": f"/apps/{ainft_name}/logs/{ainetwork_settings.ain_address}/{now}/request",
         },
     )
-    request_data[
-        "prompt"
-    ] = f"{bot['prompt']}\n\n{bot['human']}: {data.user_message}\n{bot['bot']}:"
+    request_data["prompt"] = f"{bot['prompt']}\n\n{bot['human']}: {data.user_message}\n{bot['bot']}:"
     res = requests.post(
         f"{endpoint}/generate",
         headers={"Content-Type": "application/json", "accept": "application/json"},
